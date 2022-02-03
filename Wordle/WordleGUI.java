@@ -11,7 +11,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.Color;
-import java.awt.Font;
 
 public class WordleGUI implements ActionListener{
     private static JFrame frame;
@@ -23,43 +22,42 @@ public class WordleGUI implements ActionListener{
     private static JLabel information;
     private static JLabel success;
     static List<String> words;
-    static Font f = new Font(Font.SANS_SERIF, 3, 5);
     private static String word = "BRAIN";
     private boolean gameOver = false;
     private int rounds = 0;
-    private static int pixels = 150;
+    private static int pixels = 50;
     public static void main(String args[]){
         panel = new JPanel();
         frame = new JFrame();
 
-        frame.setSize(500, 500);
+        frame.setSize(400, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setLayout(null);
 
         gameLabel = new JLabel("Wordle");
-        gameLabel.setBounds(250, 25, 80, 10);
+        gameLabel.setBounds(170, 25, 80, 10);
         panel.add(gameLabel);
 
         textEntryLabel = new JLabel("Enter your guess");
-        textEntryLabel.setBounds(50, 70, 150 , 25);
+        textEntryLabel.setBounds(50, 270, 150 , 25);
         panel.add(textEntryLabel);
 
         userText = new JTextField();
-        userText.setBounds(200, 70, 165, 25);
+        userText.setBounds(200, 270, 165, 25);
         panel.add(userText);
 
         submitGuessButton = new JButton("Submit!");
-        submitGuessButton.setBounds(200, 100, 100, 25);
+        submitGuessButton.setBounds(200, 300, 100, 25);
         submitGuessButton.addActionListener(new WordleGUI());
         panel.add(submitGuessButton);
 
         information = new JLabel("");
-        information.setBounds(200, 120, 250, 25);
+        information.setBounds(300, 230, 250, 25);
         panel.add(information);
 
         success = new JLabel("");
-        success.setBounds(150, 300, 250, 25);
+        success.setBounds(50, 230, 250, 25);
         panel.add(success);
 
         frame.setVisible(true);
@@ -94,7 +92,8 @@ public class WordleGUI implements ActionListener{
         List<Character> colouredLetters = new ArrayList<>();
         JTextPane colouredGuess = new JTextPane();
         colouredGuess.setText(guess);
-        colouredGuess.setBounds(200, pixels, 150, 25);
+        colouredGuess.setBounds(150, pixels, 100, 25);
+        colouredGuess.setFont(colouredGuess.getFont().deriveFont(20.0f));
         panel.add(colouredGuess);
 
         SimpleAttributeSet green = new SimpleAttributeSet();

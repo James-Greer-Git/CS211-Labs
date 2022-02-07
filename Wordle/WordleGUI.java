@@ -8,8 +8,11 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.awt.Color;
 
 public class WordleGUI implements ActionListener{
@@ -22,11 +25,15 @@ public class WordleGUI implements ActionListener{
     private static JLabel information;
     private static JLabel success;
     static List<String> words;
-    private static String word = "BRAIN";
+    private static String word; 
     private boolean gameOver = false;
     private int rounds = 0;
     private static int pixels = 50;
-    public static void main(String args[]){
+    static File wordFile = new File("");
+    public static void main(String args[]) throws FileNotFoundException{
+        words = wordList(wordFile);
+        word = words.get((int)(Math.random()*words.size())).toUpperCase();
+
         panel = new JPanel();
         frame = new JFrame();
 
@@ -48,16 +55,16 @@ public class WordleGUI implements ActionListener{
         panel.add(userText);
 
         submitGuessButton = new JButton("Submit!");
-        submitGuessButton.setBounds(200, 300, 100, 25);
+        submitGuessButton.setBounds(264, 300, 100, 25);
         submitGuessButton.addActionListener(new WordleGUI());
         panel.add(submitGuessButton);
 
         information = new JLabel("");
-        information.setBounds(300, 230, 250, 25);
+        information.setBounds(50, 230, 300, 25);
         panel.add(information);
 
         success = new JLabel("");
-        success.setBounds(50, 230, 250, 25);
+        success.setBounds(50, 240, 350, 25);
         panel.add(success);
 
         frame.setVisible(true);
@@ -70,6 +77,10 @@ public class WordleGUI implements ActionListener{
         String guess = userText.getText().toUpperCase();
         if(guess.length() != 5){
             information.setText("Guess must consist of 5 letters");
+            return;
+        }
+        if(!words.contains(guess)){
+            information.setText("This is not acceptable answer, enter another guess");
             return;
         }
         else{
@@ -89,8 +100,8 @@ public class WordleGUI implements ActionListener{
         compareGuess(guess);
     }
     public void compareGuess(String guess){
-        List<Character> colouredLetters = new ArrayList<>();
         JTextPane colouredGuess = new JTextPane();
+        boolean[] greenFix = new boolean[5];    //boolean array to keep track of what positions are solved
         colouredGuess.setText(guess);
         colouredGuess.setBounds(150, pixels, 100, 25);
         colouredGuess.setFont(colouredGuess.getFont().deriveFont(20.0f));
@@ -104,20 +115,30 @@ public class WordleGUI implements ActionListener{
 
         for(int i = 0; i < guess.length(); i++){
             if(word.charAt(i) == guess.charAt(i)){
-                    doc.setCharacterAttributes(i, 1, green, false);
-                    colouredLetters.add(word.charAt(i));
+                doc.setCharacterAttributes(i, 1, green, false);
+                greenFix[i] = true;
+                System.out.println("Green: " + guess.charAt(i));
             }
         }
         for(int i = 0; i < guess.length(); i++){
-            for(int j = 0; j < guess.length(); j++){
-                if(word.charAt(i) == guess.charAt(j) && i != j){
-                    if(!colouredLetters.contains(word.charAt(i))){
-                        doc.setCharacterAttributes(j, 1, yellow, false);
-                        colouredLetters.add(word.charAt(i));
-                    }
+            for(int j = 0; j < guess.length(); j++){  
+                if(word.charAt(i) == guess.charAt(j) && i != j && !greenFix[i] && !greenFix[j]){
+                    doc.setCharacterAttributes(j, 1, yellow, false);
+                    System.out.println("Yellow: " + guess.charAt(j));
                 }
             }
         }
         pixels += 25;
+    }
+    static List<String> wordList(File file) throws FileNotFoundException{
+        Scanner scanner = new Scanner(file);
+        List<String> wordListFromFile = new ArrayList<>();
+
+        while(scanner.hasNextLine()){
+            wordListFromFile.add(scanner.nextLine());
+        }
+
+        scanner.close();
+        return wordListFromFile;
     }
 }

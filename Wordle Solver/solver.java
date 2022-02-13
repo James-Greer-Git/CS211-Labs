@@ -32,8 +32,8 @@ public class solver{
 
     }
     public static List<List<Character>> reduceList(String guess, String result, List<List<Character>> words){
-        List<List<Character>> greenList = new ArrayList<>();
-        List<List<Character>> yellowList = new ArrayList<>();
+        // List<List<Character>> greenList = new ArrayList<>();
+        // List<List<Character>> yellowList = new ArrayList<>();
         List<List<Character>> reducedList = new ArrayList<>();
 
         for(int i = 0; i < guess.length(); i++){
@@ -46,41 +46,42 @@ public class solver{
                 break;
             }
         }
-        //loop to handle green tiles
+        //loop to remove words with invalid letters
+        for(int i = 0; i < words.size(); i++){
+            for(int j = 0; j < invalidLetters.size(); j++){
+                if(words.get(i).contains(invalidLetters.get(j))){
+                    words.remove(i);
+                    i = 0;
+                }
+            }
+        }
+        //loop to remove words without yellow letters
+        for(int i = 0; i < words.size(); i++){
+            for(int j = 0; j < yellowLetters.size(); j++){
+                if(!words.get(i).contains(yellowLetters.get(j))){
+                    words.remove(i);
+                    i = 0;
+                }
+            }
+        }
+        //loop to remove words without green letters
         for(int i = 0; i < words.size(); i++){
             for(int j = 0; j < greenLetters.size(); j++){
-                if(greenLetters.containsKey(words.get(i).get(j))){
-                    greenList.add(words.get(i));
+                //System.out.println(words.get(i).get(j));
+                if(greenLetters.get(words.get(i).get(j)) != null){
+                    //System.out.println(greenLetters.get(words.get(i).get(j)));
+                    if(greenLetters.get(words.get(i).get(j)) != j){
+                        words.remove(i);
+                    }
                 }
             }
         }
-        //loop to handle yellow letters
-        for(int i = 0; i < greenList.size(); i++){
-            for(int j = 0; j < yellowLetters.size(); j++){
-                if(greenList.get(i).contains(yellowLetters.get(j))){
-                    yellowList.add(greenList.get(i));
-                }
-            }
-        }
-        //loop to handle invalid letters
-        for(int i = 0; i < yellowList.size(); i++){
-            for(int j = 0; j < invalidLetters.size(); j++){
-                if(!yellowList.get(i).contains(invalidLetters.get(j))){
-                    reducedList.add(yellowList.get(i));
-                }
-            }
-        }
-        System.out.println("Got rid of all the black tiles for this round!");
 
 
+        System.out.println("Reduced list size: " + words.size());
 
-
-
-        return reducedList;
+        return words;
     }
-
-
-
     public static List<List<Character>> readListFromFile(File file) throws FileNotFoundException{
         List<List<Character>> words = new ArrayList<>();
         Scanner scanner = new Scanner(file);

@@ -42,7 +42,10 @@ public class solver{
         
         for(int i = 0; i < guess.length(); i++){
             switch(result.charAt(i)){
-                case '0': invalidLetters.add(guess.charAt(i));
+                case '0': 
+                if(!invalidLetters.contains(guess.charAt(i))){
+                    invalidLetters.add(guess.charAt(i));
+                }
                 break;
                 case '1': 
                 if(greenLetters[i] == '0'){
@@ -51,7 +54,10 @@ public class solver{
                 }
                 
                 break;
-                case '2': yellowLetters.add(guess.charAt(i));
+                case '2': 
+                if(!yellowLetters.contains(guess.charAt(i))){
+                    yellowLetters.add(guess.charAt(i));
+                }
                 break;
             }
         }
@@ -59,7 +65,7 @@ public class solver{
         //reduce word list using black tiles
         for(int i = 0; i < words.size(); i++){
             for(int j = 0; j < 5; j++){
-                if(invalidLetters.contains(words.get(i).charAt(j))){
+                if(invalidLetters.contains(words.get(i).charAt(j)) && !yellowLetters.contains(words.get(i).charAt(j))){
                     String word = words.get(i);
                     reducedInvalidList.remove(word);
                 }
@@ -110,7 +116,6 @@ public class solver{
                 }
             }
         }
-
         return reducedGreenList;
     }
 

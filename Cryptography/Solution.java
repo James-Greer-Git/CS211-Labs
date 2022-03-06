@@ -6,22 +6,21 @@ import javax.crypto.spec.IvParameterSpec;
 public class Solution {
     public static void main (String args[])
     {
-
         Scanner scanner = new Scanner(System.in);
-        //Alice's Public Key
-        long p = scanner.nextLong();                //modulus
+
+        long modulus = scanner.nextLong();          //modulus
         long g = scanner.nextLong();                //generator number
         long gPowXModp = scanner.nextLong();        //g^x modulo p
 
-        long x = findPower(g, p, gPowXModp);
+        long x = findPower(g, modulus, gPowXModp);
 
-        //Bob's Cipher
         long gPowYModp = scanner.nextLong();        //g^y modulo p
         long m_gPowXYModp = scanner.nextLong();     //m*g^xy modulo p
 
-        long c1 = modPow(gPowYModp, p - 1 - x, p);
+        long xBaby = babyStepGiantStep(g, modulus, gPowXModp);
+        long c1 = modPow(gPowYModp, modulus - 1 - xBaby, modulus);
 
-        long m = (m_gPowXYModp*c1)%p;
+        long m = (m_gPowXYModp*c1)%modulus;
         
         scanner.nextLine();
 
@@ -32,9 +31,43 @@ public class Solution {
 
         
     }
+    public static long babyStepGiantStep(long number, long modulus, long result){
+        //N == Ceiling of sqrt(modulus)
+        //For 0 <= i < N compute number**i and store (i, number**i)
+        //Compute number**(-N)
+        //Y == result
+        //For 0 <= j < N {
+        //  Check if Y is the second component of any pair in the table
+        //  If so return j*N + i
+        //}
+        long start = System.nanoTime();
+        long N = (long) Math.ceil(Math.sqrt(modulus));
+        List<Long> numberPower = new ArrayList<>();
+        for(int i = 0; i < N; i++){
+            numberPower.add(i, modPow(number, i, modulus));
+        }
+        long c = modPow(number, modulus - 1, modulus);
+        long Y = result;
+        for(int j = 0; j < N; j++){
+            if(numberPower.contains(Y)){
+                long finish = System.nanoTime();
+                System.out.println("Time: " + (double )(finish - start)/1000000);
+                return (long) (j*N + numberPower.indexOf(Y));
+            }
+            else{
+                Y = Y*c;
+            }
+        }
+        return 0;
+    }
+
+
     public static long findPower(long number, long modulus, long result){
+        long start = System.nanoTime();
         for(int i = 0; i < modulus; i++){
             if(modPow(number, i, modulus) == result){
+                long finish = System.nanoTime();
+                System.out.println((double) (finish - start)/1000000);
                 return i;
             }
         }
